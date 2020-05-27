@@ -24,8 +24,8 @@ class ReplayMemory(object):
                  batch_size,
                  seed,
                  alpha=0.6,
-                 beta0=0.1,
-                 beta_rate=0.99992):
+                 beta0=.1,
+                 beta_rate=0.9999995):
 
         self.action_size = action_size
         self.buffer_size = buffer_size
@@ -42,7 +42,7 @@ class ReplayMemory(object):
 
         self.seed = seed
 
-    def push(self, state, action, reward, next_state, done, priority):
+    def push(self, state, action, reward, next_state, done):
         """
             Add experience to the memory
         """
@@ -62,19 +62,19 @@ class ReplayMemory(object):
             Random sample experiences
         """
 
-        priorities = self.td_errors[:self.n_entries]
+        priorities = self.td_errors[:self.n_entries] + EPS
 
         self._update_beta()
 
-        probs = [(priority + EPS) ** self.alpha for priority in priorities]
-        probs /= np.sum(probs)
+        probs = priorities ** self.alpha
+        probs = np.array(probs/np.sum(probs), dtype=np.float)
 
         idxs = np.random.choice(self.n_entries, batch_size, replace=False, p=probs)
 
-        selected_probs = np.array([probs[idx] for idx in idxs])
-        weights = (self.n_entries * selected_probs) ** -self.beta
+        weights = (self.n_entries * probs) ** -self.beta
         scaled_weights = weights/weights.max()
         experiences = [self.memory[idx] for idx in idxs]
+        selected_weights = np.array([scaled_weights[idx] for idx in idxs])
 
         states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)
         actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long().to(device)
@@ -82,7 +82,7 @@ class ReplayMemory(object):
         next_states = torch.from_numpy(np.vstack([e.next_state for e in experiences if e is not None])).float().to(device)
         dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(device)
 
-        return states, actions, rewards, next_states, dones, scaled_weights, idxs
+        return states, actions, rewards, next_states, dones, selected_weights, idxs
 
     def __len__(self):
         return len(self.memory)
