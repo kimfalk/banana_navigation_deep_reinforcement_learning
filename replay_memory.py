@@ -69,10 +69,10 @@ class ReplayMemory(object):
         probs = priorities ** self.alpha
         probs = np.array(probs/np.sum(probs), dtype=np.float)
 
-        idxs = np.random.choice(self.n_entries, batch_size, replace=False, p=probs)
-
         weights = (self.n_entries * probs) ** -self.beta
         scaled_weights = weights/weights.max()
+
+        idxs = np.random.choice(self.n_entries, batch_size, replace=False, p=probs)
         experiences = [self.memory[idx] for idx in idxs]
         selected_weights = np.array([scaled_weights[idx] for idx in idxs])
 

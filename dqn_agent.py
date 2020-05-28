@@ -72,7 +72,7 @@ class DqnAgent():
                 # Update the target network
                 self.soft_update(self.qnet_local, self.qnet_target, TAU)
 
-    def act(self, state, epsilon=0.):
+    def act(self, state, epsilon=0.1):
         """
             Given a state responds with the best action according to the current policy
         :param state:  current state
@@ -100,10 +100,10 @@ class DqnAgent():
         states, actions, rewards, next_states, dones, weights, idxs = experiences
 
         weights = torch.from_numpy(weights).float().to(device)
-        online_max_action = self.qnet_local(next_states).max(1, keepdim=True)[1]
+        local_max_action = self.qnet_local(next_states).max(1, keepdim=True)[1]
 
         # Using the online network to find next action value (predicted by target network)
-        target_next = self.qnet_target(next_states.float()).gather(1, online_max_action)
+        target_next = self.qnet_target(next_states.float()).gather(1, local_max_action)
 
         # target Q values
         q_targets = rewards + (gamma * target_next * (1-dones))
@@ -112,9 +112,11 @@ class DqnAgent():
         q_expected = self.qnet_local(states).gather(1, actions)
 
         # P.E.R.
+        # Huber loss
         td_errors = q_expected - q_targets
-        value_loss = (td_errors.pow(2) * weights).mean()
+        value_loss = torch.where(td_errors < 1, (td_errors.pow(2).mul(0.5)), td_errors - 0.5)
 
+        value_loss = F.mse_loss(q_expected, q_targets)
         self.optimizer.zero_grad()
         value_loss.backward()
         torch.nn.utils.clip_grad_norm_(self.qnet_local.parameters(),
@@ -122,8 +124,8 @@ class DqnAgent():
         self.optimizer.step()
 
         # P.E.R
-        td_errors = np.abs(td_errors.detach().cpu().numpy())
-        self.memory.update(idxs, td_errors)
+        #td_errors = np.abs(td_errors.detach().cpu().numpy())
+        #self.memory.update(idxs, td_errors)
 
     def soft_update(self, local_model, target_model, tau):
 
@@ -133,6 +135,7 @@ class DqnAgent():
                                  local_model.parameters()):
 
             target.data.copy_(tau * local.data + (1.0 - tau) * target.data)
+
 
 
 if __name__ == '__main__':
