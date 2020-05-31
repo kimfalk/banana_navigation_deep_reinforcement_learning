@@ -2,7 +2,7 @@
 
 Welcome to the banana picking world. The job is to collect yellow bananas while avoiding the blue bananas. 
 
-Your agent is running around in a squared walled world where blue and yellow bananas are scattered around
+The agent's job is to collect yellow bananas in a squared world with blue and yellow bananas are scattered around.
 we need to teach the agent to pick the yellow bananas which it will give it a reward of +1 while avoid 
 picking up the blue bananas which will give a reward of -1. 
 
@@ -11,11 +11,12 @@ given the time.
 
 The solution is based on the DQN algorithm with the double-DQN. An attempt to add 
 [Prioritized Experience Replay](https://arxiv.org/pdf/1511.05952.pdf)
-was made, and it did improve learning speed, but peaked early and degraded fast again. 
+was made, and it did improve learning speed, but peaked early and degraded fast again. I have left the calculations
+in the replay memory and the training method of the agent as comments. But they are not used.   
 
 ## Implementation
 The base algorithm *DQN* - Deep Q-learning Network, is using a neural network to approximate the Q-function. 
-A Q function will given a state predict how much expected cumulative reward each action will bring. 
+A Q-function will given a state predict how much expected cumulative reward each action will bring. 
 
 One of the bigger challenges in reinforcement learning is fact that you don't have any ground truth,
 this results in having to use the predictor both when you are calculating your expected result as well as 
@@ -25,7 +26,7 @@ you use two networks, one that is used online to decide what the agent should do
 network. The target network is created by copying the weights of the local network once every x number of 
 steps. 
 
-The challenge with this set up is that the network has an tendency to overestimate the action values. 
+The challenge with this setup is that the network has an tendency to overestimate the action values. 
 The [double Q-learning algorithm](https://arxiv.org/pdf/1509.06461.pdf) introduces an improvement for this. 
 By estimating the action values from the target network, but using the local network to choose which action 
 is the optimal. 
@@ -38,7 +39,7 @@ The neural network used had:
 Following hyper parameters where used:
 ``` python
 LR = 5e-4               # learning rate
-BUFFER_SIZE = 10000     # replay memory size
+BUFFER_SIZE = 30000     # replay memory size
 BATCH_SIZE = 64         # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
@@ -50,4 +51,6 @@ EPS = 1e-6              # noise
 * Run more tests with the Prioritized Experience Replay algorithm. I think the problem was with the weights 
 became either too small making it impossible for the network to learn. And slowly pushed the neural network 
 in a wrong direction. 
-* Try out the Duelling DQN algorithm [Dueling DQN](https://arxiv.org/abs/1511.06581) 
+* Try out the Duelling DQN algorithm [Dueling DQN](https://arxiv.org/abs/1511.06581)
+* Im also curious to see how good they can actually become. Letting it run for longer, and see how good it can become.
+  

@@ -50,10 +50,7 @@ class DqnAgent():
 
         self.t_step = 0
 
-    def step(self, state, action, reward, next_state, done, action_values):
-
-        #torch_next_state = torch.from_numpy(next_state).float().unsqueeze(0).to(device)
-        #next_action_values = self.qnet_target(torch_next_state.float()).detach().cpu().data.numpy()
+    def step(self, state, action, reward, next_state, done):
 
         self.memory.push(state,
                          action,
@@ -99,7 +96,8 @@ class DqnAgent():
 
         states, actions, rewards, next_states, dones, weights, idxs = experiences
 
-        weights = torch.from_numpy(weights).float().to(device)
+        # P.E.R: weights = torch.from_numpy(weights).float().to(device)
+
         local_max_action = self.qnet_local(next_states).max(1, keepdim=True)[1]
 
         # Using the online network to find next action value (predicted by target network)
@@ -111,10 +109,8 @@ class DqnAgent():
         # Q(s_t, a)
         q_expected = self.qnet_local(states).gather(1, actions)
 
-        # P.E.R.
         # Huber loss
-        td_errors = q_expected - q_targets
-        value_loss = torch.where(td_errors < 1, (td_errors.pow(2).mul(0.5)), td_errors - 0.5)
+        # P.E.R: value_loss = torch.where(td_errors < 1, (td_errors.pow(2).mul(0.5)), td_errors - 0.5)
 
         value_loss = F.mse_loss(q_expected, q_targets)
         self.optimizer.zero_grad()
@@ -124,6 +120,7 @@ class DqnAgent():
         self.optimizer.step()
 
         # P.E.R
+        #td_errors = q_expected - q_targets
         #td_errors = np.abs(td_errors.detach().cpu().numpy())
         #self.memory.update(idxs, td_errors)
 
@@ -140,6 +137,8 @@ class DqnAgent():
 
 if __name__ == '__main__':
 
+    ### The following was used to train the agent outside of the notebook.
+
     from unityagents import UnityEnvironment
     import numpy as np
     import random
@@ -148,9 +147,7 @@ if __name__ == '__main__':
     from collections import deque
     import time
 
-    # please do not modify the line below
-    # env = UnityEnvironment(file_name="/data/Banana_Linux_NoVis/Banana.x86_64")
-    env = UnityEnvironment(file_name="Banana")
+    env = UnityEnvironment(file_name="data/Banana")
 
     SEED = 42
     state_size = 37
@@ -189,12 +186,16 @@ if __name__ == '__main__':
 
                 action, action_values = agent.act(state, epsilon)
 
-                env_info = env.step(action)[brain_name]  # send the action to the environment
+                env_info = env.step(action)[brain_name]       # send the action to the environment
                 next_state = env_info.vector_observations[0]  # get the next state
-                reward = env_info.rewards[0]  # get the reward
-                done = env_info.local_done[0]  # get the done status
+                reward = env_info.rewards[0]                  # get the reward
+                done = env_info.local_done[0]                 # get the done status
 
-                agent.step(state, action, reward, next_state, done, action_values)
+                agent.step(state,
+                           action,
+                           reward,
+                           next_state,
+                           done)                              # inform agent about what happened
 
                 state = next_state
                 score += reward

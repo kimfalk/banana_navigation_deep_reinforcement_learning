@@ -1,47 +1,53 @@
+
 # Udacity DRL nanodegree - Project 1: Navigation
-In this project, we train an agent to navigate, and collect bananas in a 
-arge, square world, provided by a Unity machine learning agent environment. 
+
+[//]: # (Image References)
+
+[image1]: https://user-images.githubusercontent.com/10624937/42135619-d90f2f28-7d12-11e8-8823-82b970a54d7e.gif "Trained Agent"
+
+In this project, we train an agent to navigate and collect bananas in a square world. Provided by a Unity agent environment. 
 More information on the Unity ml-agents can be found 
 [here](https://github.com/Unity-Technologies/ml-agents).
 
 ## Project Details
-The agent interfaces to an environment which is characterised as follows:
+The agent interface to an environment is as follows:
 
-A reward of +1 is provided for collecting a yellow banana, and a reward of 
--1 is provided for collecting a blue banana. Thus, the goal of your agent 
+The agent receives a reward of +1 when collecting a yellow banana, and a reward of -1 when collecting a blue banana. Thus, the goal of the agent 
 is to collect as many yellow bananas as possible while avoiding blue bananas.
 
-The state space has 37 dimensions and contains the agent's velocity, 
+The state-space has 37 dimensions and contains the agent's velocity, 
 along with ray-based perception of objects around the agent's forward
 direction. Given this information, the agent has to learn how to best select 
 actions. Four discrete actions are available, corresponding to:
-* 0 - move forrward.
-* 1 - move backward.
+* 0 - move forward.
+* 1 - move backwards.
 * 2 - turn left.
 * 3 - turn right.
 
-The task is episodic, and in order to solve the environment, your agent must get an average score of +13 over 100 consecutive episodes.
+The task is episodic, and in order to solve the environment, the agent must get an average score of +13 over 100 consecutive episodes.
 
 ### Repository structure
 The code is structured as follows: 
-* **Navigation.ipynb**: this is where the deep rl agent is trained.
-* **dgn_agent.py**: this module implements a class to represent a vanilla dqn agent.
-* **model.py**: this module contains the implementation of the neural network approximating the action value function.
-* **replay_memory.py**: this module contains the replay memory. 
+* **Navigation.ipynb**: this notebook simulates the agent in the environment and trains the agent.
+* **dgn_agent.py**: implements a double DQN agent.
+* **model.py**:  contains the implementation of the neural network approximating the action-value function.
+* **replay_memory.py**: contains the replay memory. 
 * **checkpoint.pth**: this is the binary containing the trained neural network weights.
 
-### Dependencies
-* python 3.6
-* numpy: install with 'pip install numpy'.
-* PyTorch: install by following the instructions [here](https://github.com/reinforcement-learning-kr/pg_travel/wiki/Installing-Unity-ml-agents-on-Windows).
-* ml-agents: install by following instructions [here](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Installation-Windows.md).
+### Getting Started
 
-## Getting Started
-In cell 2 of Navigation.ipynb we import the Unity environment from a remote server. For a local installation of the 
-Unity ml-agents, please refer to the following two sources:
-* [Linux, Mac](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Installation.md)
-* [Windows 10](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Installation-Windows.md)
+1. Download the environment from one of the links below.  You need only select the environment that matches your operating system:
+    - Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Linux.zip)
+    - Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana.app.zip)
+    - Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86.zip)
+    - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86_64.zip)
+    
+    (_For Windows users_) Check out [this link](https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64) if you need help with determining if your computer is running a 32-bit version or 64-bit version of the Windows operating system.
 
-## Instructions
-This is a jupyter notebook project. To run the code and train the deep reinforcement learning agent, you simply 
-execute each of the cells in **Navigation.ipynb**. After training, the average score per hundred episodes will be displayed.
+    (_For AWS_) If you'd like to train the agent on AWS (and have not [enabled a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md)), then please use [this link](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Linux_NoVis.zip) to obtain the environment.
+
+2. Place the file in the DRLND GitHub repository, in the `p1_navigation/` folder, and unzip (or decompress) the file. 
+
+### Instructions
+
+Follow the instructions in `Navigation.ipynb` to get started with training the agent!  
