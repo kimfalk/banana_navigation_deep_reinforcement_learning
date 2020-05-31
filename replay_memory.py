@@ -66,15 +66,17 @@ class ReplayMemory(object):
 
         self._update_beta()
 
-        probs = priorities ** self.alpha
-        probs = np.array(probs/np.sum(probs), dtype=np.float)
 
-        weights = (self.n_entries * probs) ** -self.beta
-        scaled_weights = weights/weights.max()
+        # P.E.R probs = priorities ** self.alpha
+        # P.E.R probs = np.array(probs/np.sum(probs), dtype=np.float)
 
-        idxs = np.random.choice(self.n_entries, batch_size, replace=False, p=probs)
+        # P.E.R weights = (self.n_entries * probs) ** -self.beta
+        # P.E.R scaled_weights = weights/weights.max()
+
+        # P.E.R idxs = np.random.choice(self.n_entries, batch_size, replace=False, p=probs)
+        idxs = np.random.choice(self.n_entries, batch_size, replace=False)
         experiences = [self.memory[idx] for idx in idxs]
-        selected_weights = np.array([scaled_weights[idx] for idx in idxs])
+        # P.E.R selected_weights = np.array([scaled_weights[idx] for idx in idxs])
 
         states = torch.from_numpy(np.vstack([e.state for e in experiences if e is not None])).float().to(device)
         actions = torch.from_numpy(np.vstack([e.action for e in experiences if e is not None])).long().to(device)
@@ -82,7 +84,8 @@ class ReplayMemory(object):
         next_states = torch.from_numpy(np.vstack([e.next_state for e in experiences if e is not None])).float().to(device)
         dones = torch.from_numpy(np.vstack([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(device)
 
-        return states, actions, rewards, next_states, dones, selected_weights, idxs
+        # P.E.R return states, actions, rewards, next_states, dones, selected_weights, idxs
+        return states, actions, rewards, next_states, dones, np.zeros(batch_size), idxs
 
     def __len__(self):
         return len(self.memory)

@@ -46,6 +46,10 @@ TAU = 1e-3              # for soft update of target parameters
 UPDATE_EVERY = 3        # how often should the network be updated.
 EPS = 1e-6              # noise
 ```
+
+
+[image1]: images/rewards.png "Trained Agent chart"
+
 ## Ideas for future work 
 
 * Run more tests with the Prioritized Experience Replay algorithm. I think the problem was with the weights 

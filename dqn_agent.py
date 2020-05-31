@@ -110,6 +110,7 @@ class DqnAgent():
         q_expected = self.qnet_local(states).gather(1, actions)
 
         # Huber loss
+        # P.E.R: td_errors = q_expected - q_targets
         # P.E.R: value_loss = torch.where(td_errors < 1, (td_errors.pow(2).mul(0.5)), td_errors - 0.5)
 
         value_loss = F.mse_loss(q_expected, q_targets)
@@ -120,7 +121,6 @@ class DqnAgent():
         self.optimizer.step()
 
         # P.E.R
-        #td_errors = q_expected - q_targets
         #td_errors = np.abs(td_errors.detach().cpu().numpy())
         #self.memory.update(idxs, td_errors)
 
